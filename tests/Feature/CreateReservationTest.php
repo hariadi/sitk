@@ -25,21 +25,8 @@ class CreateReservationTest extends TestCase
     }
 
     /** @test */
-    function an_authenticated_user_can_create_new_reservations()
-    {
-        $this->signIn();
-
-        $reservation = make('App\Reservation');
-
-        $response = $this->post('/reservations', $reservation->toArray());
-
-        $this->get($response->headers->get('Location'))->assertSee($reservation->reason);
-    }
-
-    /** @test */
     function a_reservation_requires_a_reason()
     {
-        $this->withExceptionHandling();
         $this->createResevation(['reason' => null])->assertSessionHasErrors('reason');
     }
 

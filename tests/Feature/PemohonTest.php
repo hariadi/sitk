@@ -43,6 +43,16 @@ class PemohonTest extends TestCase
     }
 
     /** @test */
+    function an_authenticated_user_can_create_new_reservations()
+    {
+        $reservation = make('App\Reservation', ['user_id' => auth()->id()]);
+
+        $response = $this->post('/reservations', $reservation->toArray());
+
+        $this->get($response->headers->get('Location'))->assertSee($reservation->reason);
+    }
+
+    /** @test */
     public function it_may_not_show_other_authorized_user_reservations()
     {
         $this->withExceptionHandling();
