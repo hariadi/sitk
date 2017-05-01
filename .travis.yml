@@ -4,7 +4,7 @@ php:
   - 5.6
 
 before_script:
-  - mkdir bootstrap/cache
+  - phpenv config-rm xdebug.ini
   - cp .env.travis .env
   - composer self-update
   - composer install --no-interaction --prefer-dist --no-suggest
