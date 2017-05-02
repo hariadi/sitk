@@ -69,15 +69,13 @@ $factory->define(App\Driver::class, function (Faker\Generator $faker) {
 
 $factory->define(App\Reservation::class, function (Faker\Generator $faker) {
 
-    $start_at = Carbon::now()->startOfDay()->addHours(8);
-
     return [
         'reason' => $faker->sentence,
         'user_id' => function () {
             return factory(App\User::class)->create()->id;
         },
-        'start_at' => $start_at,
-        'end_at' => $start_at->copy()->addHours(8),
+        'start_at' => Carbon::now()->startOfDay()->addHours(8),
+        'end_at' => Carbon::now()->startOfDay()->addHours(16),
         'destination' => $faker->address
     ];
 });

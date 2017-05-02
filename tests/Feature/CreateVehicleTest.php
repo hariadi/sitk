@@ -27,7 +27,7 @@ class CreateVehicleTest extends TestCase
     }
 
     /** @test */
-    function an_authenticated_user_without_role_cannot_create_new_vehicles()
+    function an_authenticated_user_may_not_create_new_vehicles()
     {
         $user = create('App\User', ['role_id' => 1]);
         $this->signIn($user);
@@ -38,7 +38,7 @@ class CreateVehicleTest extends TestCase
     }
 
     /** @test */
-    function an_authenticated_user_with_role_approver_can_create_new_vehicles()
+    function an_approver_can_create_new_vehicles()
     {
         $this->signIn(create('App\User', ['role_id' => 2]));
 
@@ -52,7 +52,7 @@ class CreateVehicleTest extends TestCase
     }
 
     /** @test */
-    function an_authenticated_user_with_role_admin_can_create_new_vehicles()
+    function an_admin_can_create_new_vehicles()
     {
         $this->signIn(create('App\User', ['role_id' => 3]));
 
@@ -142,7 +142,7 @@ class CreateVehicleTest extends TestCase
             'model' => 'User make update to Model'
         ];
 
-        $response = $this->patch('/vehicles/' . $vehicle->id, $update);
+        $response = $this->patch($vehicle->path(), array_replace($vehicle->toArray(), $update));
 
         $this->assertDatabaseHas('vehicles', $update);
 
@@ -162,12 +162,11 @@ class CreateVehicleTest extends TestCase
             'model' => 'User make update to Model'
         ];
 
-        $response = $this->patch('/vehicles/' . $vehicle->id, $update);
+        $response = $this->patch(route('vehicles.update', $vehicle), array_replace($vehicle->toArray(), $update));
 
         $this->assertDatabaseHas('vehicles', $update);
 
         $this->get($response->headers->get('Location'))
-            //->assertSessionHas('flash_success')
             ->assertSee($update['model']);
     }
 

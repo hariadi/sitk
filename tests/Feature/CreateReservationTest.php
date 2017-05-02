@@ -74,7 +74,7 @@ class CreateReservationTest extends TestCase
             'reason' => 'User make update'
         ];
 
-        $response = $this->patch($reservation->path(), $update);
+        $response = $this->patch($reservation->path(), array_replace($reservation->toArray(), $update));
 
         $this->assertDatabaseHas('reservations', $update);
 
@@ -103,7 +103,9 @@ class CreateReservationTest extends TestCase
 
         $reservation = make('App\Reservation', $overrides+['user_id' => auth()->id()]);
 
-        return $this->post(route('reservations.store'), $reservation->toArray());
+        $inputs = array_replace($reservation->toArray(), $overrides);
+
+        return $this->post(route('reservations.store'), $inputs);
     }
 
 }

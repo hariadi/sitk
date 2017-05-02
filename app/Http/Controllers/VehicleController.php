@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Vehicle;
 use Illuminate\Http\Request;
 use App\Filters\VehicleFilters;
+use Illuminate\Support\Facades\Validator;
 
 class VehicleController extends Controller
 {
@@ -57,11 +58,17 @@ class VehicleController extends Controller
             return redirect()->route('vehicles.index')->withFlashWarning('Maaf, anda tiada kebenaran. Hanya Pelulus atau Pentadbir sahaja dibenarkan untuk mewujudkan kenderaan.');
         }
 
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'registration_no' => 'required',
             'types' => 'required',
             'capacity' => 'required',
         ]);
+
+        if ($validator->fails()) {
+            return redirect(route('vehicles.create'))
+                        ->withErrors($validator)
+                        ->withInput();
+        }
 
         $vehicle = Vehicle::create([
             'registration_no' => request('registration_no'),
@@ -112,6 +119,18 @@ class VehicleController extends Controller
      */
     public function update(Request $request, Vehicle $vehicle)
     {
+        $validator = Validator::make($request->all(), [
+            'registration_no' => 'required',
+            'types' => 'required',
+            'capacity' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect(route('vehicles.edit', $vehicle))
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
         $vehicle->update($request->except(['_token', '_method']));
 
         return redirect($vehicle->path())->withFlashSuccess('Kenderaan telah dikemaskini!');

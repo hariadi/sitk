@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Driver;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class DriverController extends Controller
 {
@@ -50,11 +51,17 @@ class DriverController extends Controller
             return redirect()->route('drivers.index')->withFlashWarning('Maaf, anda tiada kebenaran. Hanya Pelulus atau Pentadbir sahaja dibenarkan untuk mewujudkan pemandu.');
         }
 
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'name' => 'required',
             'phone' => 'required',
             'email' => 'required',
         ]);
+
+        if ($validator->fails()) {
+            return redirect(route('drivers.create'))
+                        ->withErrors($validator)
+                        ->withInput();
+        }
 
         $driver = Driver::create([
             'name' => request('name'),
@@ -101,15 +108,21 @@ class DriverController extends Controller
      */
     public function update(Request $request, Driver $driver)
     {
-        if (auth()->user()->cant('create', Driver::class)) {
+        if (auth()->user()->cant('update', Driver::class)) {
             return redirect()->route('drivers.index')->withFlashWarning('Maaf, anda tiada kebenaran. Hanya Pelulus atau Pentadbir sahaja dibenarkan untuk mewujudkan pemandu.');
         }
 
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'name' => 'required',
             'phone' => 'required',
             'email' => 'required',
         ]);
+
+        if ($validator->fails()) {
+            return redirect(route('drivers.edit', $driver))
+                        ->withErrors($validator)
+                        ->withInput();
+        }
 
         $driver->update([
             'name' => request('name'),

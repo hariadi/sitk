@@ -28,7 +28,7 @@ class DriverPolicy
      * @param  \App\Driver  $driver
      * @return mixed
      */
-    public function update(User $user, Driver $driver)
+    public function update(User $user)
     {
         return $user->role_id == 2 || $user->role_id == 3;
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Reservation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ReservationController extends Controller
 {
@@ -49,12 +50,18 @@ class ReservationController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'reason' => 'required',
             'start_at' => 'required',
             'end_at' => 'required',
             'destination' => 'required',
         ]);
+
+        if ($validator->fails()) {
+            return redirect(route('reservations.create'))
+                        ->withErrors($validator)
+                        ->withInput();
+        }
 
         $reservation = Reservation::create([
             'user_id' => auth()->id(),
@@ -121,12 +128,18 @@ class ReservationController extends Controller
                 ->withFlashWarning('Maaf, anda tiada kebenaran untuk mengemaskini tempahan orang lain.');
         }
 
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'reason' => 'required',
             'start_at' => 'required',
             'end_at' => 'required',
             'destination' => 'required',
         ]);
+
+        if ($validator->fails()) {
+            return redirect(route('reservations.edit'))
+                        ->withErrors($validator)
+                        ->withInput();
+        }
 
         $reservation->update($request->except(['_token', '_method']));
 

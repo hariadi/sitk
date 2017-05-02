@@ -20,7 +20,7 @@ class ReadDriverTest extends TestCase
     /** @test */
     public function an_authenticated_user_can_view_all_drivers()
     {
-        $response = $this->get('/drivers')
+        $this->get('/drivers')
             ->assertSee($this->driver->name)
             ->assertSee($this->driver->email)
             ->assertSee($this->driver->phone);
@@ -29,7 +29,7 @@ class ReadDriverTest extends TestCase
     /** @test */
     public function an_authenticated_user_can_view_single_driver()
     {
-        $response = $this->get('/drivers/' . $this->driver->id)
+        $this->get('/drivers/' . $this->driver->id)
             ->assertSee($this->driver->name)
             ->assertSee($this->driver->email)
             ->assertSee($this->driver->phone);

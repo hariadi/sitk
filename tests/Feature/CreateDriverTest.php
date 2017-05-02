@@ -27,7 +27,7 @@ class CreateDriverTest extends TestCase
     }
 
     /** @test */
-    function an_authenticated_user_without_role_cannot_create_new_drivers()
+    function an_authenticated_user_may_not_create_new_drivers()
     {
         $user = create('App\User', ['role_id' => 1]);
         $this->signIn($user);
@@ -38,7 +38,7 @@ class CreateDriverTest extends TestCase
     }
 
     /** @test */
-    function an_authenticated_user_with_role_approver_can_create_new_drivers()
+    function an_approver_can_create_new_drivers()
     {
         $this->signIn(create('App\User', ['role_id' => 2]));
 
@@ -52,7 +52,7 @@ class CreateDriverTest extends TestCase
     }
 
     /** @test */
-    function an_authenticated_user_with_role_admin_can_create_new_drivers()
+    function an_admin_can_create_new_drivers()
     {
         $this->signIn(create('App\User', ['role_id' => 3]));
 
@@ -90,16 +90,8 @@ class CreateDriverTest extends TestCase
 
         $driver = create('App\Driver');
 
-        $this->get('/drivers/'. $driver->id . '/edit')->assertRedirect('/login');
-        $this->put('/drivers/'. $driver->id)->assertRedirect('/login');
-
-        $this->signIn(create('App\User', ['role_id' => 1]));
-        $this->get('/drivers/'. $driver->id . '/edit')
-            ->assertRedirect('/drivers')
-            ->assertSessionHas('flash_warning');
-        $this->put('/drivers/'. $driver->id)
-            ->assertRedirect('/drivers')
-            ->assertSessionHas('flash_warning');
+        $this->get(route('drivers.edit', $driver))->assertRedirect('/login');
+        $this->patch(route('drivers.update', $driver))->assertRedirect('/login');
     }
 
     /** @test */
@@ -169,7 +161,7 @@ class CreateDriverTest extends TestCase
             'email' => 'updated@email.com',
         ];
 
-        $response = $this->patch('/drivers/' . $driver->id, $update);
+        $response = $this->patch(route('drivers.update', $driver), $update);
 
         $this->assertDatabaseHas('drivers', $update);
 
